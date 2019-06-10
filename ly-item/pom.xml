@@ -11,7 +11,9 @@
 
     <groupId>com.leyou.service</groupId>
     <artifactId>ly-item</artifactId>
+    <!-- 设置打包方式为pom -->
     <packaging>pom</packaging>
+
     <modules>
         <module>ly-item-interface</module>
         <module>ly-item-service</module>

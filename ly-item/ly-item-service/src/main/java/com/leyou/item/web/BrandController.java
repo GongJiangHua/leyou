@@ -33,12 +33,12 @@ class BrandController {
 
     /**
      * 分类、关键字等查询品牌
-     * @param page
-     * @param rows
-     * @param sortBy
-     * @param desc
-     * @param key
-     * @return
+     * @param page 当前页码
+     * @param rows 每页大小
+     * @param sortBy 排序字段
+     * @param desc 是否为降序
+     * @param key 搜索关键字
+     * @return total+items+totalPage
      */
     @GetMapping("page")
     public ResponseEntity<PageResult<Brand>> queryCategoryListByPid(
@@ -46,9 +46,8 @@ class BrandController {
             @RequestParam(value = "rows", defaultValue = "5") Integer rows,
             @RequestParam(value = "sortBy", required = false) String sortBy,
             @RequestParam(value = "desc", defaultValue = "false") Boolean desc,
-            @RequestParam(value = "key", required = false) String key
-    ){
-//        return ResponseEntity.ok(mBrandService.queryBrandByPageAndSort(page, rows, sortBy, desc, key));
+            @RequestParam(value = "key", required = false) String key){
+
         PageResult<Brand> result = mBrandService.queryBrandByPage(page, rows, sortBy, desc, key);
         if (result == null || result.getItems() == null || result.getItems().size() < 1) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -87,7 +86,6 @@ class BrandController {
      */
     @DeleteMapping
     public ResponseEntity<Void> deleteBrand(@RequestBody Map<String, Long> map) {
-        //System.out.println(map);
         Long bid = map.get("bid");
         mBrandService.deleteBrand(bid);
         return new ResponseEntity<>(HttpStatus.OK);

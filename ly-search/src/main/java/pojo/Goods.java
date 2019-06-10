@@ -14,7 +14,7 @@ import lombok.Data;
 /**
  * author:  niceyoo
  * blog:    https://cnblogs.com/niceyoo
- * desc:
+ * desc:    商品es索引库
  */
 @Data
 @Document(indexName = "goods",type = "docs", shards = 1, replicas = 0)

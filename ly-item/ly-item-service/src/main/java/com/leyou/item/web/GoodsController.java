@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * author:  niceyoo
  * blog:    https://cnblogs.com/niceyoo
- * desc:
+ * desc:    商品
  */
 @RestController
 public class GoodsController {

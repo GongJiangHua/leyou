@@ -17,20 +17,22 @@ import tk.mybatis.mapper.entity.Example;
 
 @Service
 public class BrandServiceImpl implements BrandService {
+
     @Autowired
     private BrandMapper brandMapper;
 
     @Override
     public PageResult<Brand> queryBrandByPage(Integer page, Integer rows, String sortBy, Boolean desc, String key) {
         PageResult pageResult = new PageResult<Brand>();
-        //如果pageSize也就是rows为0并且pageSizeZero为true时
+        // 如果pageSize也就是rows为0并且pageSizeZero为true时
         boolean pageSizeZero = false;
         if (rows == -1) {
             rows = 0;
             pageSizeZero = true;
         }
-
+        // 开始分页 - 分页插件
         PageHelper.startPage(page, rows, true, null, pageSizeZero);
+        // 过滤
         Example example = new Example(Brand.class);
         Example.Criteria criteria = example.createCriteria();
         if (StringUtils.isNotEmpty(key)) {
@@ -41,13 +43,13 @@ public class BrandServiceImpl implements BrandService {
         } else {
             example.orderBy(sortBy).asc();
         }*/
-        //排序条件
+        // 排序条件
         if (StringUtils.isNotEmpty(sortBy)) {
             String sort = desc ? "DESC" : "ASC";
             example.setOrderByClause(sortBy + " " + sort);
         }
+        // 查询 - 返回结果
         Page<Brand> pages = (Page<Brand>) brandMapper.selectByExample(example);
-
         pageResult.setTotal(pages.getTotal());
         pageResult.setItems(pages);
         pageResult.setTotalPage(Long.valueOf(rows));
@@ -55,7 +57,11 @@ public class BrandServiceImpl implements BrandService {
     }
 
 
-    //添加brand
+    /**
+     * 添加brand
+     * @param brand
+     * @param cids
+     */
     @Override
     @Transactional
     public void saveBrand(Brand brand, List<Long> cids) {
@@ -66,7 +72,11 @@ public class BrandServiceImpl implements BrandService {
         });
     }
 
-    //修改brand
+    /**
+     * 修改brand
+     * @param brand
+     * @param cids
+     */
     @Override
     @Transactional
     public void changeBrand(Brand brand, List<Long> cids) {
@@ -81,8 +91,10 @@ public class BrandServiceImpl implements BrandService {
         });
     }
 
-
-    //删除品牌
+    /**
+     * 删除品牌
+     * @param bid
+     */
     @Override
     @Transactional
     public void deleteBrand(Long bid) {
@@ -90,13 +102,21 @@ public class BrandServiceImpl implements BrandService {
         brandMapper.deleteCategoryBrand(bid);
     }
 
-    //根据分类查询品牌
+    /**
+     * 根据分类查询品牌
+     * @param cid
+     * @return
+     */
     @Override
     public List<Brand> queryBrandByCategory(Long cid) {
         return brandMapper.queryBrandByCid(cid);
     }
 
-    //根据brandId集合查询brand集合
+    /**
+     * 根据brandId集合查询brand集合
+     * @param bids
+     * @return
+     */
     @Override
     public List<Brand> queryBrandByIds(List<Long> bids) {
         return brandMapper.selectByIdList(bids);

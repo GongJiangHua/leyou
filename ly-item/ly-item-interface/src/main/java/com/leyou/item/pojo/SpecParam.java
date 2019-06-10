@@ -21,13 +21,17 @@ public class SpecParam {
     @Id
     @KeySql(useGeneratedKeys = true)
     private Long id;
+    // 分类id
     private Long cid;
-    private Long groupId; // 规格组id
-    private String name;// 规格名称
+    // 规格组id
+    private Long groupId;
+    // 规格名称
+    private String name;
     @Column(name = "`numeric`")
     private Boolean numeric;
     private String unit;
     private Boolean generic;
+    // 是否被搜索
     private Boolean searching;
     private String segments;
 }
