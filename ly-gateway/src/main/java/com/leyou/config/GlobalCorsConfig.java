@@ -31,12 +31,14 @@ public class GlobalCorsConfig {
         config.addAllowedMethod("DELETE");
         config.addAllowedMethod("PATCH");
         config.setMaxAge(3600L);
-        // 4）允许的头信息
+        // 4）允许携带所有的头信息跨域访问
         config.addAllowedHeader("*");
         // 5) 有效时长 1小时
         config.setMaxAge(3600L);
         //2.添加映射路径，我们拦截一切请求
+        //1）初始化配置源对象
         UrlBasedCorsConfigurationSource configSource = new UrlBasedCorsConfigurationSource();
+        //2）拦截所有的球球，校验是否允许跨域
         configSource.registerCorsConfiguration("/**", config);
 
         //3.返回新的CorsFilter.

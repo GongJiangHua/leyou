@@ -24,20 +24,15 @@ public class BrandServiceImpl implements BrandService {
     @Override
     public PageResult<Brand> queryBrandByPage(Integer page, Integer rows, String sortBy, Boolean desc, String key) {
         PageResult pageResult = new PageResult<Brand>();
-        // 如果pageSize也就是rows为0并且pageSizeZero为true时
-        boolean pageSizeZero = false;
-        if (rows == -1) {
-            rows = 0;
-            pageSizeZero = true;
-        }
-        // 开始分页 - 分页插件
-        PageHelper.startPage(page, rows, true, null, pageSizeZero);
-        // 过滤
+
+        // 初始化一个example
         Example example = new Example(Brand.class);
         Example.Criteria criteria = example.createCriteria();
         if (StringUtils.isNotEmpty(key)) {
             criteria.andLike("letter", "%" + key + "%");
         }
+        // 开始分页 - 分页插件
+        PageHelper.startPage(page, rows);
        /* if (desc) {
             example.orderBy(sortBy).desc();
         } else {
@@ -52,7 +47,7 @@ public class BrandServiceImpl implements BrandService {
         Page<Brand> pages = (Page<Brand>) brandMapper.selectByExample(example);
         pageResult.setTotal(pages.getTotal());
         pageResult.setItems(pages);
-        pageResult.setTotalPage(Long.valueOf(rows));
+        pageResult.setTotalPage(rows);
         return pageResult;
     }
 
@@ -120,5 +115,10 @@ public class BrandServiceImpl implements BrandService {
     @Override
     public List<Brand> queryBrandByIds(List<Long> bids) {
         return brandMapper.selectByIdList(bids);
+    }
+
+    @Override
+    public Brand queryBrandById(Long id){
+        return brandMapper.selectByPrimaryKey(id);
     }
 }

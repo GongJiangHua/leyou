@@ -7,7 +7,6 @@ import lombok.Data;
 
 /**
  * 带分页的返回实体
- * @author niceyoo
  * @param <T>
  */
 @Data
@@ -20,7 +19,7 @@ public class PageResult<T> {
     /**
      * 总页数
      */
-    private Long totalPage;
+    private Integer totalPage;
     /**
      * 当前页数据
      */
@@ -34,7 +33,7 @@ public class PageResult<T> {
         this.items = items;
     }
 
-    public PageResult(Long total, Long totalPage, List<T> items) {
+    public PageResult(Long total, Integer totalPage, List<T> items) {
         this.total = total;
         this.totalPage = totalPage;
         this.items = items;

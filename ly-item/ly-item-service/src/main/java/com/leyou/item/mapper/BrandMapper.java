@@ -10,14 +10,15 @@ import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
 import tk.mybatis.mapper.additional.idlist.SelectByIdListMapper;
 import tk.mybatis.mapper.common.Mapper;
 
 /**
- * author:  niceyoo
- * blog:    https://cnblogs.com/niceyoo
+ * author:  jianghua
  * desc:    品牌的 mapper
  */
+@Repository
 public interface BrandMapper extends Mapper<Brand> , SelectByIdListMapper<Brand, Long> {
     //添加品牌
     @Insert("insert INTO tb_category_brand (category_id, brand_id) VALUES (#{cid},#{bid})")

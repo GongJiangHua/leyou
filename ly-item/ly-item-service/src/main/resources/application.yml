@@ -4,9 +4,16 @@ spring:
   application:
     name: item-service
   datasource:
-    url: jdbc:mysql://localhost:3306/leyou?useUnicode=true&characterEncoding=utf-8
+    url: jdbc:mysql://localhost:3306/heima?useSSL=false&useUnicode=true&characterEncoding=utf-8
     username: root
-    password: 1234
+    password: Gjh01192811
+  rabbitmq:
+    host: 127.0.0.1
+    virtual-host: /leyou
+    username: leyou
+    password: leyou
+    template:
+      exchange: LEYOU.ITEM.EXCHANGE
   hikari: # springboot2.x之后默认采用hikari为连接池
     maximum-pool-size: 30
     minimum-idle: 10

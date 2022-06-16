@@ -7,17 +7,18 @@ import com.leyou.item.service.SpecService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.acl.Group;
 import java.util.List;
 
 /**
- * author:  niceyoo
- * blog:    https://cnblogs.com/niceyoo
+ * author:  jianghua
  * desc:
  */
 @RestController
@@ -61,5 +62,14 @@ public class SpecController {
             return ResponseEntity.ok(paramList);
         }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping("group/param/{cid}")
+    public ResponseEntity<List<SpecGroup>> queryGroupWithParam(@PathVariable("cid")Long cid){
+        List<SpecGroup> groups = this.specService.queryGroupWithParam(cid);
+        if (CollectionUtils.isEmpty(groups)){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(groups);
     }
 }

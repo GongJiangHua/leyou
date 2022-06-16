@@ -5,18 +5,20 @@ import com.leyou.item.service.CategoryService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.ConnectException;
 import java.util.List;
 
 /**
- * author:  niceyoo
- * blog:    https://cnblogs.com/niceyoo
+ * author:  jianghua
  * desc:    商品分类 controller
  */
 @RestController
@@ -28,17 +30,24 @@ class CategoryController {
 
     /**
      * 分类列表
+     * 根据父类目的id查询所有子节点
      * @param pid
      * @return
      */
     @GetMapping("list")
     public ResponseEntity<List<Category>> queryByParentId(@RequestParam(value = "pid", defaultValue = "0") Long pid) {
         // 默认查询一级分类
+        //响应400
+        if (pid == null || pid < 0){
+            return ResponseEntity.badRequest().build();
+        }
+        //执行查询，获取结果集
         List<Category> categoryList = categoryService.queryByParentId(pid);
         if (categoryList == null || categoryList.size() == 0) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity<>(categoryList, HttpStatus.OK);
+        //响应200
+        return ResponseEntity.ok(categoryList);
     }
 
     /**

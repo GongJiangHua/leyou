@@ -21,8 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * author:  niceyoo
- * blog:    https://cnblogs.com/niceyoo
+ * author:  jianghua
  * desc:    商品
  */
 @RestController
@@ -86,7 +85,7 @@ public class GoodsController {
 
     /*修改商品数据回显查询 ---开始---*/
     /**
-     * 查询spudetail   spu/detail/2
+     * 根据主键查询spudetail   spu/detail/2
      * @param spuId
      * @return
      */

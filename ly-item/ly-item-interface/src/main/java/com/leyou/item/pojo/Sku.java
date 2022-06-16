@@ -10,8 +10,7 @@ import lombok.Data;
 import tk.mybatis.mapper.annotation.KeySql;
 
 /**
- * author:  niceyoo
- * blog:    https://cnblogs.com/niceyoo
+ * author:  jianghua
  * desc:    库存最小单元：规格、颜色、款式
  */
 @Table(name = "tb_sku")

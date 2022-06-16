@@ -13,8 +13,7 @@ import lombok.Data;
 import tk.mybatis.mapper.annotation.KeySql;
 
 /**
- * author:  niceyoo
- * blog:    https://cnblogs.com/niceyoo
+ * author:  jianghua
  * desc:    商品聚合信息最小单元：品牌、分类、标题、是否上架
  */
 @Table(name = "tb_spu")

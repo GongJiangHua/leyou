@@ -9,6 +9,7 @@ eureka:
     service-url: # 映射路径对应的实际url地址
       defaultZone: http://127.0.0.1:10086/eureka
     registry-fetch-interval-seconds: 5
+    register-with-eureka: true
 #    fetch-registry: false # 去除自己的注册 ()
 #    register-with-eureka: false  (放开后会访问报错-待定)
 # 网关配置默认路由前缀（统一配默认请求前缀）
@@ -16,18 +17,27 @@ zuul:
   prefix: /api  # 添加路由前缀
   routes:
     item-service: /item/**
+    search-service: /search/**
+    user-service: /user/**
+    auth-service: /auth/**
+  add-host-header: true
+  sensitive-headers: #配置禁止使用的头信息，这里设置为null，否则set-cookie无效
+  host:
+    connect-timeout-millis: 60000
+    socket-timeout-millis: 60000
+  ribbon:
+    eureka:
+      enabled: true
+    ConnectTimeot: 10000 # 连接超时时间（ms）
+    ReadTimeot: 10000 # 通信超时时间（ms）
+    OkToRertryOnAllOperations: ture # 是否对所有操作重试
+    MaxAutoRetriesNextServer: 1 #同一个服务不同实例的重试次数
+    MaxAutoRetries: 1 #同一实例的重试次数
 # 配置全局异常熔断时间
-hystrix:
-  command:
-    default:
-      execution:
-        isolation:
-          thread:
-            timeoutInMilliseconds: 7000 # 熔断超时时长：7000ms
-
-ribbon:
-  ConnectTimeout: 1000 # 连接超时时间(ms)
-  ReadTimeout: 3500 # 通信超时时间(ms)
-  OkToRetryOnAllOperations: true # 是否对所有操作重试
-  MaxAutoRetriesNextServer: 0 # 同一服务不同实例的重试次数（切换服务重试次数）
-  MaxAutoRetries: 0 # 同一实例的重试次数（当前服务重试次数）
+  hystrix:
+    command:
+      default:
+        execution:
+          isolation:
+            thread:
+              timeoutInMillisecond: 10000 #熔断超时时长 10000ms

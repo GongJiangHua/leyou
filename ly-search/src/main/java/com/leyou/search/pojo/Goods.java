@@ -1,4 +1,4 @@
-package pojo;
+package com.leyou.search.pojo;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -12,8 +12,6 @@ import java.util.Map;
 import lombok.Data;
 
 /**
- * author:  niceyoo
- * blog:    https://cnblogs.com/niceyoo
  * desc:    商品es索引库
  */
 @Data
@@ -21,9 +19,9 @@ import lombok.Data;
 public class Goods {
 
     @Id
-    private Long id;
+    private Long id;//spuId
     @Field(type = FieldType.Text, analyzer = "ik_max_word")
-    private String all;
+    private String all;//所有需要被搜索的信息，包含标题，分类，甚至品牌
     @Field(type = FieldType.Keyword, index = false)
     /** 卖点 **/
     private String subTitle;
@@ -32,7 +30,7 @@ public class Goods {
     private Long cid2;// 2级分类id
     private Long cid3;// 3级分类id
     private Date createTime;// 创建时间
-    private List<Long> price;// 价格
+    private List<Double> price;// 价格
     @Field(type = FieldType.Keyword, index = false)
     private String skus;// sku信息的json结构
     private Map<String, Object> specs;// 可搜索的规格参数，key是参数名，值是参数值

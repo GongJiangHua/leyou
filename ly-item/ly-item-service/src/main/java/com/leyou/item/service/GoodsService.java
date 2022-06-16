@@ -9,15 +9,12 @@ import com.leyou.item.mapper.SkuMapper;
 import com.leyou.item.mapper.SpuDetailMapper;
 import com.leyou.item.mapper.SpuMapper;
 import com.leyou.item.mapper.StockMapper;
-import com.leyou.item.pojo.Sku;
-import com.leyou.item.pojo.Spu;
-import com.leyou.item.pojo.SpuDetail;
-import com.leyou.item.pojo.Stock;
+import com.leyou.item.pojo.*;
 import com.leyou.item.vo.SpuVo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,11 +25,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
 /**
- * author:  niceyoo
- * blog:    https://cnblogs.com/niceyoo
+ * author:  jianghua
  * desc:    商品service
  */
 @Service
@@ -53,7 +50,8 @@ public class GoodsService {
     @Autowired
     private StockMapper stockMapper;
     @Autowired
-    private RabbitTemplate amqpTemplate;
+    private AmqpTemplate amqpTemplate;
+
 
     private Logger logger = LoggerFactory.getLogger(GoodsService.class);
 
@@ -68,7 +66,6 @@ public class GoodsService {
     public PageResult<SpuVo> querySpuByPage(String key, Boolean saleable, Integer page, Integer rows) {
         Example example = new Example(Spu.class);
         Example.Criteria criteria = example.createCriteria();  //创建条件对象
-        PageHelper.startPage(page, rows);
         //动态查询标题
         if (StringUtils.isNotBlank(key)) {
             criteria.andLike("title", "%" + key + "%");  //条件搜索
@@ -77,6 +74,9 @@ public class GoodsService {
         if (saleable != null) {
             criteria.andEqualTo("saleable", saleable);   //是否上下架
         }
+        //添加分页
+        PageHelper.startPage(page, rows);
+        //执行查询
         Page<Spu> spuList = (Page<Spu>) goodsMapper.selectByExample(example);
         //通过Stream流的map方法把流中的每一个元素转换成另一个类型
         Stream<SpuVo> spuBoStream = spuList.getResult().stream().map(spu -> {
@@ -92,7 +92,7 @@ public class GoodsService {
         });
         //把Stream流转换成集合
         List<SpuVo> spuVoList = spuBoStream.collect(Collectors.toList());
-        return new PageResult<>(spuList.getTotal(), new Long(spuList.getPages()), spuVoList);
+        return new PageResult<>(spuList.getTotal(),spuVoList);
     }
 
     /**
@@ -108,7 +108,7 @@ public class GoodsService {
         spu.setLastUpdateTime(spu.getCreateTime());//设置最后修改时间
         this.spuMapper.insert(spu);
 
-        //保存spu详情
+        //保存spuDetail详情
         SpuDetail spuDetail = spu.getSpuDetail();
         spuDetail.setSpuId(spu.getId());
         this.spuDetailMapper.insert(spuDetail);
@@ -116,8 +116,11 @@ public class GoodsService {
         //保存skus和库存
         this.saveSkuAndStock(spu.getSkus(), spu.getId());
         //发送消息通知搜索服务
-        this.sendMessage(spu.getId(), "insert");
+
+        this.sendMessage("insert",spu.getId());
+
     }
+
 
     /**
      * 保存skus和库存
@@ -145,62 +148,39 @@ public class GoodsService {
      */
     @Transactional
     public void updateGoods(SpuVo spu) {
-        //直接修改spu
-        spu.setLastUpdateTime(new Date());
-        this.spuMapper.updateByPrimaryKeySelective(spu);
-        //直接修改spuDetail
-        this.spuDetailMapper.updateByPrimaryKeySelective(spu.getSpuDetail());
-        //获取前端提交最新的skus
-        List<Sku> newSkus = spu.getSkus();
-        //获取数据库旧的skus
-        List<Sku> oldSkus = this.querySkuBySpuId(spu.getId());//数据库中之前对应spu下面所有的sku
-        //这里存在用户新加的sku,和更改已存在的sku,和用户删掉了的sku.需要做相应处理
-        newSkus.forEach(newSku -> {
-            if (newSku.getId() == null) {//保存新加的sku,判断sku的id是否为空,为空就是用户新加的,不为空就是修改已经有的sku
-                newSku.setSpuId(spu.getId());
-                newSku.setCreateTime(new Date());
-                newSku.setLastUpdateTime(newSku.getCreateTime());
-                //保存sku
-                skuMapper.insertSelective(newSku);
-                //保存sku的库存
-                Stock stock = new Stock();
-                stock.setSkuId(newSku.getId());
-                stock.setStock(newSku.getStock());
-                stockMapper.insertSelective(stock);
-            } else {//表示要被修改的
-                newSku.setLastUpdateTime(new Date());
-                newSku.setSpuId(spu.getId());
-                //修改sku
-                skuMapper.updateByPrimaryKeySelective(newSku);
-                //修改sku库存
-                Stock stock = new Stock();
-                stock.setStock(newSku.getStock());
-                stock.setSkuId(newSku.getId());
-                stockMapper.updateByPrimaryKeySelective(stock);
-                //如果用户把已有的sku删掉了我们也需要在数据库里删掉
-                // 在旧的skus中移除修改的,剩下的就是被用户删掉的,在下方作下架处理
-                //removeIf方法,传入一个数据判断者predicate,把集合中符合条件的数据给删掉
-                // 迭代oldSkus中的每个元素与newSku相比较.返回true就删除该oldSku
-                oldSkus.removeIf(oldSku -> oldSku.getId().longValue() == newSku.getId().longValue());
-              /*  for (int i = 0; i < oldSkus.size(); i++) {
-                    Sku oldsku = oldSkus.get(i);
-                    if (oldsku.getId().longValue() == newSku.getId().longValue()) {
-                        oldSkus.remove(i);
-                        i--;
-                    }
-                }*/
-            }
+        // 查询以前sku
+        List<Sku> skus = this.querySkuBySpuId(spu.getId());
+        // 如果以前存在，则删除
+        if(!CollectionUtils.isEmpty(skus)) {
+            List<Long> ids = skus.stream().map(s -> s.getId()).collect(Collectors.toList());
+            // 删除以前库存
+            Example example = new Example(Stock.class);
+            example.createCriteria().andIn("skuId", ids);
+            this.stockMapper.deleteByExample(example);
 
-        });
-        //把剩余的做下架处理
-        oldSkus.forEach(oldSku -> {
-            oldSku.setEnable(false);
-            oldSku.setLastUpdateTime(new Date());
-            this.skuMapper.updateByPrimaryKeySelective(oldSku);
-        });
+            // 删除以前的sku
+            Sku record = new Sku();
+            record.setSpuId(spu.getId());
+            this.skuMapper.delete(record);
+
+        }
+        // 新增sku和库存
+        saveSkuAndStock(spu.getSkus(), spu.getId());
+
+        // 更新spu
+        spu.setLastUpdateTime(new Date());
+        spu.setCreateTime(null);
+        spu.setValid(null);
+        spu.setSaleable(null);
+        this.spuMapper.updateByPrimaryKeySelective(spu);
+
+        // 更新spu详情
+        this.spuDetailMapper.updateByPrimaryKeySelective(spu.getSpuDetail());
+
         //发送消息通知搜索服务
-        this.sendMessage(spu.getId(), "update");
+        this.sendMessage("update",spu.getId());
     }
+
 
     /**
      * 根据spuId查询Sku
@@ -244,7 +224,7 @@ public class GoodsService {
      * @param id
      * @param type
      */
-    private void sendMessage(Long id, String type) {
+    private void sendMessage(String type, Long id) {
         // 发送消息
         try {
             this.amqpTemplate.convertAndSend("item." + type, id);

@@ -20,4 +20,7 @@ public interface BrandService {
     List<Brand> queryBrandByCategory(Long cid);
 
     List<Brand> queryBrandByIds(List<Long> bids);
+
+    Brand queryBrandById(Long id);
 }
+

@@ -5,8 +5,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 /**
- * author:  niceyoo
- * blog:    https://cnblogs.com/niceyoo
  * desc:    分布式文件上传启动类
  */
 @EnableDiscoveryClient

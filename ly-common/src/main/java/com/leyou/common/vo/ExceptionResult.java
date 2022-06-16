@@ -4,7 +4,6 @@ import com.leyou.common.enums.ExceptionEnum;
 import lombok.Data;
 
 /**
- * @author niceyoo
  *
  * 自定义异常结果类
  */

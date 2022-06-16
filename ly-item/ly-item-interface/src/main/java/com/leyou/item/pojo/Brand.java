@@ -7,8 +7,7 @@ import lombok.Data;
 import tk.mybatis.mapper.annotation.KeySql;
 
 /**
- * author:  niceyoo
- * blog:    https://cnblogs.com/niceyoo
+ * author:  jianghua
  * desc:    商品品牌
  */
 

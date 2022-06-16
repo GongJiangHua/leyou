@@ -7,8 +7,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 /**
- * author:  niceyoo
- * blog:    https://cnblogs.com/niceyoo
  * desc:    处理跨域请求的处理类
  */
 @Configuration

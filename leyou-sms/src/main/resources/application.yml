@@ -1,0 +1,23 @@
+server:
+  port: 8086
+spring:
+  application:
+    name: sms-service
+  rabbitmq:
+    host: 127.0.0.1
+    virtual-host: /leyou
+    username: leyou
+    password: leyou
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:10086/eureka
+  instance:
+    lease-renewal-interval-in-seconds: 5 # 每隔5秒发送一次心跳
+    lease-expiration-duration-in-seconds: 10 # 10秒不发送就过期
+leyou:
+  sms:
+    accessKeyId: LTAI5tJVF3ZK8voYA3kskwQ3 # 你自己的accessKeyId
+    accessKeySecret: bfPaxr8oAJok66jcEuu3QOsIaj594W # 你自己的AccessKeySecret
+    signName: 阿里云短信测试 # 签名名称
+    verifyCodeTemplate: SMS_154950909 # 模板名称

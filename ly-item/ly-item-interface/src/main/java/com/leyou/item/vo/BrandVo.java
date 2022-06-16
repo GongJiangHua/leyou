@@ -7,8 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * author:  niceyoo
- * blog:    https://cnblogs.com/niceyoo
  * desc:    用于前台交互的品牌实体
  */
 @Data

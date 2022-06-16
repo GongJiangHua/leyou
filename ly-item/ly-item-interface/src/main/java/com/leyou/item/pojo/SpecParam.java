@@ -8,8 +8,7 @@ import lombok.Data;
 import tk.mybatis.mapper.annotation.KeySql;
 
 /**
- * author:  niceyoo
- * blog:    https://cnblogs.com/niceyoo
+ * author:  jianghua
  * desc:    规格参数
  *              - 一个商品分类下有多个规格组
  *              - 一个规格组下有多个规格参数

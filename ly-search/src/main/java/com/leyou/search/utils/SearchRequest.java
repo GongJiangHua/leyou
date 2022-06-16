@@ -1,4 +1,4 @@
-package utils;
+package com.leyou.search.utils;
 
 import java.util.Map;
 

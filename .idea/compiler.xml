@@ -7,17 +7,31 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="leyou-auth-common" />
+        <module name="leyou-user-service" />
         <module name="ly-common" />
+        <module name="leyou-sms" />
+        <module name="leyou-user-interface" />
+        <module name="ly-item-service" />
+        <module name="ly-search" />
         <module name="ly-gateway" />
         <module name="ly-item-interface" />
-        <module name="ly-item-service" />
-        <module name="ly-registry" />
-        <module name="ly-search" />
+        <module name="leyou-goods-web" />
+        <module name="leyou-auth-service" />
         <module name="ly-upload" />
+        <module name="ly-registry" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="leyou" target="1.8" />
+      <module name="leyou-auth" target="1.8" />
+      <module name="leyou-auth-common" target="1.8" />
+      <module name="leyou-auth-service" target="1.8" />
+      <module name="leyou-goods-web" target="1.8" />
+      <module name="leyou-sms" target="1.8" />
+      <module name="leyou-user" target="1.8" />
+      <module name="leyou-user-interface" target="1.8" />
+      <module name="leyou-user-service" target="1.8" />
       <module name="ly-common" target="1.8" />
       <module name="ly-gateway" target="1.8" />
       <module name="ly-item" target="1.8" />
@@ -27,5 +41,22 @@
       <module name="ly-search" target="1.8" />
       <module name="ly-upload" target="1.8" />
     </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="leyou-auth-common" options="-parameters" />
+      <module name="leyou-auth-service" options="-parameters" />
+      <module name="leyou-goods-web" options="-parameters" />
+      <module name="leyou-sms" options="-parameters" />
+      <module name="leyou-user-interface" options="-parameters" />
+      <module name="leyou-user-service" options="-parameters" />
+      <module name="ly-common" options="-parameters" />
+      <module name="ly-gateway" options="-parameters" />
+      <module name="ly-item-interface" options="-parameters" />
+      <module name="ly-item-service" options="-parameters" />
+      <module name="ly-registry" options="-parameters" />
+      <module name="ly-search" options="-parameters" />
+      <module name="ly-upload" options="-parameters" />
+    </option>
   </component>
 </project>

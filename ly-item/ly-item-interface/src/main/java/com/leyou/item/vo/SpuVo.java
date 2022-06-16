@@ -21,3 +21,4 @@ public class SpuVo extends Spu {
     @Transient
     private List<Sku> skus;// sku列表
 }
+
